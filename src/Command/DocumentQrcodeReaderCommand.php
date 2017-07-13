@@ -21,26 +21,34 @@ class DocumentQrcodeReaderCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-
+        $dir = $this->getContainer()->get('kernel')->getRootDir() . '/../../uploads/';
+        $file = $dir .  'NCA-20170705100943-yellow.pdf';
         $im = new \Imagick();
-        $im->setResolution(200, 200);
-        $im->readImage($this->getContainer()->get('kernel')->getRootDir() . '/../../uploads/NCA-20170705100943-yellow.pdf[0]');
-        //$nbpage = $im->getNumberImages();
+        $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        $im->readImage($file);
+        $x = 75;
+        $nombrePage = $im->getNumberImages();
+        for ($i=0; $i<$nombrePage; $i++){
+            $im = new \Imagick();
+            $im->setResolution($x,$x);
+            $image = $file .'['. $i .']';
+            $im->readImage($image);
+            $im->writeImage("image".$i.".png");
+            $pdf->AddPage();
+            $pdf->Image("image".$i.".png");
+            try {
+                $qrCode = new \QrReader($im, \QrReader::SOURCE_TYPE_RESOURCE);
+            }catch (\Exception $e){
+                echo "non reconnu";
+                continue;
+            }
+            dump($qrCode->decode());
+            unlink("image".$i.".jpg");
 
-        #for ($i = 0; $i < $nbpage; $i++){
-          #  $im->readImage($this->getContainer()->get('kernel')->getRootDir() . '/../../uploads/NCA-20170705100943-yellow.pdf' .'['. $i .']');
-          #  $im->writeImage("test". $i .'.pdf');
-
-        #}
-       // $im->writeImage($this->getContainer()->get('kernel')->getRootDir() . '/../../uploads/NCA-20170705100943-yellow.jpg');
-        try {
-            $qrCode = new \QrReader($im, \QrReader::SOURCE_TYPE_RESOURCE);
-        }catch (\Exception $e){
-            dump($e);
-            die();
         }
-        dump($qrCode->decode());
+       # $pdf->Output($dir.'/test.pdf', "F");
+
+
 
         $output->writeln('Command result.');
     }
