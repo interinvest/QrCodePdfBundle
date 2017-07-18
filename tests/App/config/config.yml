@@ -1,2 +1,5 @@
+imports:
+    - { resource: parameters.yml }
+
 framework:
     secret: This is a secret, change me
