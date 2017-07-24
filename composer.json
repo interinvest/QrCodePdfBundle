@@ -1,5 +1,5 @@
 {
-  "name": "InterInvest/QrCodePdfBundle",
+  "name": "inter-invest/qr-code-pdf-bundle",
   "description": "Explode PDF by Qrcode",
   "type": "bundle",
   "autoload": {

@@ -1,0 +1,2 @@
+parameters:
+    inputdir: '%kernel.root_dir%/../../web/uploads/'
